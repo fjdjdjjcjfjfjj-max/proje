@@ -1,6 +1,15 @@
 package com.proje.sosyal.android.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,12 +47,22 @@ fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
             TopLevelDestination.entries.forEach { destination ->
                 val selected = currentDestination?.hierarchy?.any { it.hasRoute(destination.route::class) } == true
                 val label = labels.getValue(destination)
-                item(
-                    selected = selected,
-                    onClick = { navController.navigateToTopLevel(destination) },
-                    icon = { Icon(destination.icon, contentDescription = label) },
-                    label = { Text(label) },
-                )
+                if (destination == TopLevelDestination.CREATE) {
+                    // TikTok tarzı: ortada yazısız, belirgin "+" düğmesi. Seçim göstergesi düğmenin kendisidir.
+                    item(
+                        selected = false,
+                        onClick = { navController.navigateToTopLevel(destination) },
+                        icon = { CreateButton(contentDescription = label) },
+                        label = null,
+                    )
+                } else {
+                    item(
+                        selected = selected,
+                        onClick = { navController.navigateToTopLevel(destination) },
+                        icon = { Icon(destination.icon, contentDescription = label) },
+                        label = { Text(label, maxLines = 1) },
+                    )
+                }
             }
         },
     ) {
@@ -60,6 +79,23 @@ fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
                 composable<ProfileRoute> { ProfileRouteScreen() }
             }
         }
+    }
+}
+
+@Composable
+private fun CreateButton(contentDescription: String) {
+    Box(
+        modifier = Modifier
+            .size(width = 52.dp, height = 34.dp)
+            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            Icons.Filled.Add,
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.size(26.dp),
+        )
     }
 }
 
