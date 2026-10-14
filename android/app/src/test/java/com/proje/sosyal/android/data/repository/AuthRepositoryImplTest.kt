@@ -33,7 +33,11 @@ class AuthRepositoryImplTest {
         refreshToken = "refresh",
         expiresIn = 900,
         refreshExpiresIn = 2_592_000,
-        user = MeDto("id", "ayse", "Ayşe", "a@example.com", null, "USER", "ADULT", "UNVERIFIED", "PUBLIC", "2026-01-01T00:00:00Z"),
+        user = MeDto(
+            id = "id", username = "ayse", displayName = "Ayşe", email = "a@example.com", role = "USER",
+            ageGroup = "ADULT", ageVerificationStatus = "UNVERIFIED", profileVisibility = "PUBLIC",
+            createdAt = "2026-01-01T00:00:00Z",
+        ),
     )
 
     @Test

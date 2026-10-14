@@ -40,6 +40,10 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://${API_DOMAIN}}
       JWT_SECRET: ${JWT_SECRET:?infra/prod/.env icinde JWT_SECRET tanimlayin}
+      MEDIA_DIR: /data/media
+    volumes:
+      # Profil fotoğrafları ve kapak görselleri (ilk oluşturulduğunda imajdaki sahiplik korunur)
+      - media:/data/media
     networks: [internal, edge]
 
   caddy:
@@ -64,5 +68,6 @@ networks:
 
 volumes:
   pgdata:
+  media:
   caddy_data:
   caddy_config:

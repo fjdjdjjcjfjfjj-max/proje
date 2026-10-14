@@ -2,19 +2,35 @@ package com.proje.sosyal.user
 
 import com.proje.sosyal.common.error.ApiException
 import com.proje.sosyal.common.error.ErrorCode
+import com.proje.sosyal.common.error.RateLimitExceededException
+import com.proje.sosyal.common.ratelimit.RateLimiter
+import com.proje.sosyal.media.ImageProcessor
+import com.proje.sosyal.media.MediaProperties
+import com.proje.sosyal.media.MediaStorage
 import com.proje.sosyal.user.dto.MeResponse
 import com.proje.sosyal.user.dto.ProfileStats
 import com.proje.sosyal.user.dto.UpdateMeRequest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionSynchronization
+import org.springframework.transaction.support.TransactionSynchronizationManager
+import org.springframework.web.multipart.MultipartFile
+import java.time.Clock
+import java.time.Duration
 import java.util.UUID
 
 @Service
 class UserService(
     private val users: UserRepository,
     private val jdbc: JdbcTemplate,
+    private val images: ImageProcessor,
+    private val storage: MediaStorage,
+    mediaProperties: MediaProperties,
+    clock: Clock,
 ) {
+    private val uploadLimiter = RateLimiter(mediaProperties.uploadsPerHour, Duration.ofHours(1), clock)
+
     @Transactional(readOnly = true)
     fun me(userId: UUID): MeResponse = toMe(load(userId))
 
@@ -38,6 +54,41 @@ class UserService(
             user.profileVisibility = visibility
         }
         return toMe(users.saveAndFlush(user))
+    }
+
+    /** Profil fotoğrafını veya kapak görselini değiştirir; eski dosya işlem başarılı olunca silinir. */
+    @Transactional
+    fun replaceImage(userId: UUID, kind: ImageProcessor.Kind, file: MultipartFile): MeResponse {
+        uploadLimiter.tryConsume(userId.toString())?.let { throw RateLimitExceededException(it) }
+        if (file.isEmpty) throw ApiException(ErrorCode.UNSUPPORTED_IMAGE)
+        val user = load(userId)
+        val jpeg = file.inputStream.use { images.process(it, kind) }
+        val newKey = storage.save(jpeg)
+        val oldKey = when (kind) {
+            ImageProcessor.Kind.AVATAR -> user.avatarKey.also { user.avatarKey = newKey }
+            ImageProcessor.Kind.BANNER -> user.bannerKey.also { user.bannerKey = newKey }
+        }
+        afterTransaction(onCommit = { storage.delete(oldKey) }, onRollback = { storage.delete(newKey) })
+        return toMe(users.saveAndFlush(user))
+    }
+
+    @Transactional
+    fun removeImage(userId: UUID, kind: ImageProcessor.Kind): MeResponse {
+        val user = load(userId)
+        val oldKey = when (kind) {
+            ImageProcessor.Kind.AVATAR -> user.avatarKey.also { user.avatarKey = null }
+            ImageProcessor.Kind.BANNER -> user.bannerKey.also { user.bannerKey = null }
+        }
+        afterTransaction(onCommit = { storage.delete(oldKey) })
+        return toMe(users.saveAndFlush(user))
+    }
+
+    private fun afterTransaction(onCommit: () -> Unit, onRollback: () -> Unit = {}) {
+        TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
+            override fun afterCompletion(status: Int) {
+                if (status == TransactionSynchronization.STATUS_COMMITTED) onCommit() else onRollback()
+            }
+        })
     }
 
     private fun load(userId: UUID): User =

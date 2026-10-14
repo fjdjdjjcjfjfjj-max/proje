@@ -12,7 +12,12 @@ data class UserProfile(
     val isProfilePrivate: Boolean,
     val postCount: Long = 0,
     val likesReceived: Long = 0,
+    /** Tam adres (API taban adresi eklenmiş); yoksa null. */
+    val avatarUrl: String? = null,
+    val bannerUrl: String? = null,
 )
+
+enum class ProfileImageKind { AVATAR, BANNER }
 
 data class ProfileUpdate(
     val displayName: String,

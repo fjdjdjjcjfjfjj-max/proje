@@ -28,5 +28,11 @@ gzip -t "$tmp"
 [ "$(gzip -dc "$tmp" | head -c 1 | wc -c)" -eq 1 ] || { echo "Yedek boş" >&2; rm -f "$tmp"; exit 1; }
 mv "$tmp" "$target"
 
+# Yüklenen görseller (profil fotoğrafı, kapak) veritabanında değil, "media" volume'ündedir.
+media_target="$BACKUP_DIR/sosyal-media-$(date -u +%Y%m%d-%H%M%S).tar.gz"
+"${COMPOSE[@]}" exec -T backend tar -C /data/media -czf - . > "$media_target.partial"
+mv "$media_target.partial" "$media_target"
+
 find "$BACKUP_DIR" -name 'sosyal-*.sql.gz' -type f -mtime "+$KEEP_DAYS" -delete
+find "$BACKUP_DIR" -name 'sosyal-media-*.tar.gz' -type f -mtime "+$KEEP_DAYS" -delete
 echo "Yedek alındı: $target ($(du -h "$target" | cut -f1))"

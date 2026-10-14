@@ -1,5 +1,6 @@
 package com.proje.sosyal.user.dto
 
+import com.proje.sosyal.media.MediaStorage
 import com.proje.sosyal.user.AgeGroup
 import com.proje.sosyal.user.AgeVerificationStatus
 import com.proje.sosyal.user.ProfileVisibility
@@ -15,6 +16,9 @@ data class MeResponse(
     val displayName: String,
     val email: String,
     val bio: String?,
+    /** Göreli adres (ör. /api/v1/media/<anahtar>.jpg); istemci API taban adresine ekler. */
+    val avatarUrl: String?,
+    val bannerUrl: String?,
     val role: Role,
     val ageGroup: AgeGroup,
     val ageVerificationStatus: AgeVerificationStatus,
@@ -29,6 +33,8 @@ data class MeResponse(
             displayName = user.displayName,
             email = user.email,
             bio = user.bio,
+            avatarUrl = MediaStorage.publicUrl(user.avatarKey),
+            bannerUrl = MediaStorage.publicUrl(user.bannerKey),
             role = user.role,
             ageGroup = user.ageGroup,
             ageVerificationStatus = user.ageVerificationStatus,

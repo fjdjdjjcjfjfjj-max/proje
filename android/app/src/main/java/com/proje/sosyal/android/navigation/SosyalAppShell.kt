@@ -20,6 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.proje.sosyal.android.R
+import androidx.compose.ui.unit.dp
+import com.proje.sosyal.android.presentation.editprofile.EditProfileRouteScreen
 import com.proje.sosyal.android.presentation.home.HomeRouteScreen
 import com.proje.sosyal.android.presentation.placeholder.NotImplementedScreen
 import com.proje.sosyal.android.presentation.profile.ProfileRouteScreen
@@ -38,9 +40,11 @@ fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
         currentDestination?.hierarchy?.any { it.hasRoute(destination.route::class) } == true
     }
     val hazeState = rememberHazeState()
+    // Tam ekran alt sayfalarda (profil düzenleme) alt çubuk gizlenir.
+    val showBar = currentDestination?.hasRoute(EditProfileRoute::class) != true
 
     Box(modifier = Modifier.fillMaxSize()) {
-        CompositionLocalProvider(LocalBottomBarInset provides bottomBarInset()) {
+        CompositionLocalProvider(LocalBottomBarInset provides if (showBar) bottomBarInset() else 0.dp) {
             NavHost(
                 navController = navController,
                 startDestination = HomeRoute,
@@ -55,17 +59,20 @@ fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
                 composable<ExploreRoute> { NotImplementedScreen(stringResource(R.string.nav_explore)) }
                 composable<CreatePostRoute> { NotImplementedScreen(stringResource(R.string.nav_create)) }
                 composable<NotificationsRoute> { NotImplementedScreen(stringResource(R.string.nav_notifications)) }
-                composable<ProfileRoute> { ProfileRouteScreen() }
+                composable<ProfileRoute> { ProfileRouteScreen(onEditProfile = { navController.navigate(EditProfileRoute) }) }
+                composable<EditProfileRoute> { EditProfileRouteScreen(onBack = { navController.popBackStack() }) }
             }
         }
 
-        FloatingNavBar(
-            destinations = TopLevelDestination.entries,
-            selected = selected,
-            onSelect = navController::navigateToTopLevel,
-            hazeState = hazeState,
-            modifier = Modifier.align(Alignment.BottomCenter),
-        )
+        if (showBar) {
+            FloatingNavBar(
+                destinations = TopLevelDestination.entries,
+                selected = selected,
+                onSelect = navController::navigateToTopLevel,
+                hazeState = hazeState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
     }
 }
 

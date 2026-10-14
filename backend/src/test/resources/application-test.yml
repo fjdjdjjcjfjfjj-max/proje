@@ -3,6 +3,8 @@ springdoc:
     enabled: true
 
 app:
+  media:
+    dir: ${java.io.tmpdir}/sosyal-test-media
   auth:
     allow-ephemeral-secret: true
     # Testler aynı IP'den çok sayıda istek atar; IP sınırı ayrıca birim testinde doğrulanır.

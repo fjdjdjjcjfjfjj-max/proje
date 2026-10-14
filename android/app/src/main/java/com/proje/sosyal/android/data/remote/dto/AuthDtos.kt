@@ -35,6 +35,8 @@ data class MeDto(
     val displayName: String,
     val email: String,
     val bio: String? = null,
+    val avatarUrl: String? = null,
+    val bannerUrl: String? = null,
     val role: String,
     val ageGroup: String,
     val ageVerificationStatus: String,

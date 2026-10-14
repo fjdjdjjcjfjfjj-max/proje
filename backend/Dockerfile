@@ -13,11 +13,13 @@ RUN ./gradlew --no-daemon -q bootJar -x test
 
 # ---- Çalışma aşaması ----
 FROM eclipse-temurin:21-jre
-RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --no-create-home app
+RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --no-create-home app \
+    && mkdir -p /data/media && chown app:app /data/media
 WORKDIR /app
 COPY --from=build /src/build/libs/*.jar app.jar
 USER app
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod \
+    MEDIA_DIR=/data/media \
     JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError"
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

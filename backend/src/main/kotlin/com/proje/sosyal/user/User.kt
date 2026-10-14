@@ -37,6 +37,14 @@ class User(
     @Column(length = 300)
     var bio: String? = null,
 
+    /** Profil fotoğrafı dosya anahtarı (<uuid>.jpg); bkz. MediaStorage. */
+    @Column(length = 64)
+    var avatarKey: String? = null,
+
+    /** Kapak görseli dosya anahtarı. */
+    @Column(length = 64)
+    var bannerKey: String? = null,
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var role: Role = Role.USER,

@@ -34,6 +34,10 @@ spring:
   threads:
     virtual:
       enabled: true
+  servlet:
+    multipart:
+      max-file-size: 8MB
+      max-request-size: 9MB
 
 server:
   port: ${SERVER_PORT:8080}
@@ -66,6 +70,8 @@ springdoc:
 app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:}
+  media:
+    dir: ${MEDIA_DIR:./data/media}
   auth:
     # Base64 kodlu, en az 32 baytlık HMAC anahtarı. Üretmek için: openssl rand -base64 48
     jwt-secret: ${JWT_SECRET:}

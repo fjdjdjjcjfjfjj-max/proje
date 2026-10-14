@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.HandlerMethodValidationException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.multipart.MaxUploadSizeExceededException
+import org.springframework.web.multipart.MultipartException
+import org.springframework.web.multipart.support.MissingServletRequestPartException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
 /**
@@ -65,6 +68,14 @@ class GlobalExceptionHandler(private val errors: ApiErrorFactory) {
     )
     fun handleBadParameter(ex: Exception, request: HttpServletRequest) =
         respond(ErrorCode.VALIDATION_FAILED, request)
+
+    @ExceptionHandler(MaxUploadSizeExceededException::class)
+    fun handleTooLarge(ex: MaxUploadSizeExceededException, request: HttpServletRequest) =
+        respond(ErrorCode.FILE_TOO_LARGE, request)
+
+    @ExceptionHandler(MultipartException::class, MissingServletRequestPartException::class)
+    fun handleMultipart(ex: Exception, request: HttpServletRequest) =
+        respond(ErrorCode.MALFORMED_REQUEST, request)
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleUnreadable(ex: HttpMessageNotReadableException, request: HttpServletRequest) =

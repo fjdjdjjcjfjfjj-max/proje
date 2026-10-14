@@ -120,4 +120,16 @@ Verileriniz satılmaz, reklam amacıyla profillenmez. Hesabınızı silme ve ver
     <string name="update_permission_message">Güncellemeyi kurabilmek için bir kereliğine "Bu kaynaktan izin ver" seçeneğini açman gerekiyor. Ayarlardan döndükten sonra tekrar "Kur"a dokun.</string>
     <string name="update_install">Kur</string>
     <string name="update_open_settings">Ayarları aç</string>
+
+    <!-- Profili düzenle (tam ekran) -->
+    <string name="action_back">Geri</string>
+    <string name="edit_change_banner">Kapak fotoğrafını değiştir</string>
+    <string name="edit_change_photo">Fotoğrafı değiştir</string>
+    <string name="edit_remove_photo">Fotoğrafı kaldır</string>
+    <string name="edit_remove_banner">Kapağı kaldır</string>
+    <string name="edit_section_about">Hakkında</string>
+    <string name="edit_section_privacy">Gizlilik</string>
+    <string name="edit_username_fixed">Kullanıcı adı değiştirilemez.</string>
+    <string name="profile_banner">Kapak fotoğrafı</string>
+    <string name="profile_photo">Profil fotoğrafı</string>
 </resources>

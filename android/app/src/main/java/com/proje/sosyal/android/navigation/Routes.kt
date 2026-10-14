@@ -21,6 +21,7 @@ import kotlinx.serialization.Serializable
 @Serializable data object CreatePostRoute
 @Serializable data object NotificationsRoute
 @Serializable data object ProfileRoute
+@Serializable data object EditProfileRoute
 
 /** Seçiliyken dolu, değilken çizgi simge (iOS tarzı). */
 enum class TopLevelDestination(

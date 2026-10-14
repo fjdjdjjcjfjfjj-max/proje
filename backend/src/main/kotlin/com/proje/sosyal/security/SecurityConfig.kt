@@ -67,6 +67,7 @@ class SecurityConfig {
                 authorize(HttpMethod.POST, "/api/v1/auth/refresh", permitAll)
                 authorize(HttpMethod.POST, "/api/v1/auth/logout", permitAll)
                 authorize(HttpMethod.GET, "/api/v1/system/status", permitAll)
+                authorize(HttpMethod.GET, "/api/v1/media/**", permitAll)
                 authorize(HttpMethod.GET, "/actuator/health", permitAll)
                 authorize(HttpMethod.GET, "/actuator/health/**", permitAll)
                 // Yalnızca springdoc etkinse (dev) bu yollar gerçekten cevap verir; prod'da 404 olur.
