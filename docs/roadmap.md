@@ -27,14 +27,15 @@
 - [x] Android: giriş/kayıt/profil ekranları, Keystore ile şifreli belirteç depolama, otomatik yenileme
 - [x] Testler: backend 47 test (gerçek PostgreSQL), Android birim testleri
 
-Bilinen eksikler: e-posta doğrulaması ve parola sıfırlama yok; süresi dolmuş `refresh_tokens`
-kayıtlarını temizleyen planlı iş yok; istek sınırı sayaçları bellekte (tek örnek).
+Bilinen eksikler: e-posta doğrulaması ve parola sıfırlama yok; istek sınırı sayaçları bellekte (tek örnek).
+
+Gece işleri (`common/maintenance/MaintenanceJobs.kt`): 18 yaşına girenlerin ADULT grubuna
+taşınması (00:05) ve süresi dolmuş oturum kayıtlarının silinmesi (03:20), İstanbul saatiyle.
 
 ## Aşama 3 — Profil ve gönderiler
 
 - Profil görüntüleme/düzenleme, gönderi oluşturma/silme, kronolojik akış (keyset sayfalama)
 - Engelleme ve yaş görünürlük filtrelerinin akışa uygulanması
-- Yetişkinliğe geçiş planlı işi
 - Android: gerçek akış, gönderi oluşturma, profil ekranları
 
 ## Aşama 4 — Etkileşim ve moderasyon
