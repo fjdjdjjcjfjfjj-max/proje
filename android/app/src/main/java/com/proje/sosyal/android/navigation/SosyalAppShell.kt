@@ -29,12 +29,14 @@ import com.proje.sosyal.android.presentation.placeholder.NotImplementedScreen
 fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
+    // navigationSuiteItems composable bir kapsam değildir; etiketler önceden çözülür.
+    val labels = TopLevelDestination.entries.associateWith { stringResource(it.labelRes) }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             TopLevelDestination.entries.forEach { destination ->
                 val selected = currentDestination?.hierarchy?.any { it.hasRoute(destination.route::class) } == true
-                val label = stringResource(destination.labelRes)
+                val label = labels.getValue(destination)
                 item(
                     selected = selected,
                     onClick = { navController.navigateToTopLevel(destination) },
