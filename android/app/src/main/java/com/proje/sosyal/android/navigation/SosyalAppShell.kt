@@ -1,21 +1,14 @@
 package com.proje.sosyal.android.navigation
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -30,47 +23,33 @@ import com.proje.sosyal.android.R
 import com.proje.sosyal.android.presentation.home.HomeRouteScreen
 import com.proje.sosyal.android.presentation.placeholder.NotImplementedScreen
 import com.proje.sosyal.android.presentation.profile.ProfileRouteScreen
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 /**
- * Uygulama iskeleti. NavigationSuiteScaffold telefonlarda alt navigasyon çubuğu,
- * tablet/geniş ekranlarda yan navigasyon rayı gösterir.
+ * Uygulama iskeleti: içerik tüm ekranı kaplar, yüzen cam alt çubuk içeriğin üzerinde durur.
+ * Geniş ekranlarda çubuk ortalanır ve genişliği sınırlanır.
  */
 @Composable
 fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
-    // navigationSuiteItems composable bir kapsam değildir; etiketler önceden çözülür.
-    val labels = TopLevelDestination.entries.associateWith { stringResource(it.labelRes) }
+    val selected = TopLevelDestination.entries.firstOrNull { destination ->
+        currentDestination?.hierarchy?.any { it.hasRoute(destination.route::class) } == true
+    }
+    val hazeState = rememberHazeState()
 
-    NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            TopLevelDestination.entries.forEach { destination ->
-                val selected = currentDestination?.hierarchy?.any { it.hasRoute(destination.route::class) } == true
-                val label = labels.getValue(destination)
-                if (destination == TopLevelDestination.CREATE) {
-                    // TikTok tarzı: ortada yazısız, belirgin "+" düğmesi. Seçim göstergesi düğmenin kendisidir.
-                    item(
-                        selected = false,
-                        onClick = { navController.navigateToTopLevel(destination) },
-                        icon = { CreateButton(contentDescription = label) },
-                        label = null,
-                    )
-                } else {
-                    item(
-                        selected = selected,
-                        onClick = { navController.navigateToTopLevel(destination) },
-                        icon = { Icon(destination.icon, contentDescription = label) },
-                        label = { Text(label, maxLines = 1) },
-                    )
-                }
-            }
-        },
-    ) {
-        Scaffold { innerPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        CompositionLocalProvider(LocalBottomBarInset provides bottomBarInset()) {
             NavHost(
                 navController = navController,
                 startDestination = HomeRoute,
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    // Çubuğun arkasında bulanıklaştırılacak içerik
+                    .hazeSource(hazeState)
+                    .background(MaterialTheme.colorScheme.background)
+                    .statusBarsPadding(),
             ) {
                 composable<HomeRoute> { HomeRouteScreen() }
                 composable<ExploreRoute> { NotImplementedScreen(stringResource(R.string.nav_explore)) }
@@ -79,22 +58,13 @@ fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
                 composable<ProfileRoute> { ProfileRouteScreen() }
             }
         }
-    }
-}
 
-@Composable
-private fun CreateButton(contentDescription: String) {
-    Box(
-        modifier = Modifier
-            .size(width = 52.dp, height = 34.dp)
-            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp)),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            Icons.Filled.Add,
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.size(26.dp),
+        FloatingNavBar(
+            destinations = TopLevelDestination.entries,
+            selected = selected,
+            onSelect = navController::navigateToTopLevel,
+            hazeState = hazeState,
+            modifier = Modifier.align(Alignment.BottomCenter),
         )
     }
 }

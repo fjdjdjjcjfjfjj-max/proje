@@ -57,6 +57,7 @@ import com.proje.sosyal.android.core.ui.components.LoadingView
 import com.proje.sosyal.android.core.ui.theme.SosyalTheme
 import com.proje.sosyal.android.core.ui.theme.Spacing
 import com.proje.sosyal.android.domain.model.UserProfile
+import com.proje.sosyal.android.navigation.LocalBottomBarInset
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -225,6 +226,8 @@ fun ProfileContent(profile: UserProfile, onEdit: () -> Unit, onMenu: () -> Unit)
                     )
                 }
             }
+            // Yüzen alt çubuğun altında içerik kalmasın
+            Spacer(Modifier.height(LocalBottomBarInset.current))
         }
     }
 }

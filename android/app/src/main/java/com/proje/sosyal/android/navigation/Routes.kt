@@ -7,6 +7,10 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.proje.sosyal.android.R
 import kotlinx.serialization.Serializable
@@ -18,14 +22,16 @@ import kotlinx.serialization.Serializable
 @Serializable data object NotificationsRoute
 @Serializable data object ProfileRoute
 
+/** Seçiliyken dolu, değilken çizgi simge (iOS tarzı). */
 enum class TopLevelDestination(
     val route: Any,
     @param:StringRes val labelRes: Int,
-    val icon: ImageVector,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
 ) {
-    HOME(HomeRoute, R.string.nav_home, Icons.Filled.Home),
-    EXPLORE(ExploreRoute, R.string.nav_explore, Icons.Filled.Search),
-    CREATE(CreatePostRoute, R.string.nav_create, Icons.Filled.Add),
-    NOTIFICATIONS(NotificationsRoute, R.string.nav_notifications, Icons.Filled.Notifications),
-    PROFILE(ProfileRoute, R.string.nav_profile, Icons.Filled.Person),
+    HOME(HomeRoute, R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home),
+    EXPLORE(ExploreRoute, R.string.nav_explore, Icons.Filled.Search, Icons.Outlined.Search),
+    CREATE(CreatePostRoute, R.string.nav_create, Icons.Filled.Add, Icons.Filled.Add),
+    NOTIFICATIONS(NotificationsRoute, R.string.nav_notifications, Icons.Filled.Notifications, Icons.Outlined.Notifications),
+    PROFILE(ProfileRoute, R.string.nav_profile, Icons.Filled.Person, Icons.Outlined.Person),
 }
