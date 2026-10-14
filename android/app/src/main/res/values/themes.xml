@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Renkler Compose tarafında (SosyalTheme) tanımlanır; bu tema yalnızca pencere arka planı içindir. -->
+    <style name="Theme.Sosyal" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sosyal</string>
+
+    <!-- Alt navigasyon -->
+    <string name="nav_home">Ana Sayfa</string>
+    <string name="nav_explore">Keşfet</string>
+    <string name="nav_create">Gönderi Oluştur</string>
+    <string name="nav_notifications">Bildirimler</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- Ortak durumlar -->
+    <string name="state_loading">Yükleniyor…</string>
+    <string name="action_retry">Tekrar dene</string>
+    <string name="error_network_title">Bağlantı kurulamadı</string>
+    <string name="error_network_message">İnternet bağlantınızı kontrol edip tekrar deneyin.</string>
+    <string name="error_server_title">Sunucu şu anda yanıt vermiyor</string>
+    <string name="error_server_message">Lütfen biraz sonra tekrar deneyin.</string>
+    <string name="error_unknown_title">Bir şeyler ters gitti</string>
+    <string name="error_unknown_message">Beklenmeyen bir hata oluştu.</string>
+
+    <!-- Ana sayfa (Aşama 1) -->
+    <string name="home_connected">Sunucuya bağlanıldı (API %1$s)</string>
+    <string name="home_feed_empty_title">Henüz gösterilecek gönderi yok</string>
+    <string name="home_feed_empty_message">Gönderi akışı Aşama 3\'te gerçek API\'ye bağlanacak.</string>
+
+    <!-- Henüz geliştirilmemiş bölümler -->
+    <string name="coming_soon_title">%1$s henüz hazır değil</string>
+    <string name="coming_soon_message">Bu bölüm sonraki geliştirme aşamalarında eklenecek.</string>
+</resources>

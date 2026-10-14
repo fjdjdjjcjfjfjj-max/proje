@@ -1,0 +1,7 @@
+springdoc:
+  api-docs:
+    enabled: true
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000

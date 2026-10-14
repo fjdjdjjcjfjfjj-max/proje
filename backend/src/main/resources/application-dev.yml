@@ -1,0 +1,23 @@
+# Yerel geliştirme profili. Parola infra/.env dosyasından (Git'e girmez) veya
+# ortam değişkeninden okunur. infra/.env.example dosyasını kopyalayın.
+spring:
+  config:
+    import: optional:file:../infra/.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${POSTGRES_DB:sosyal}
+    username: ${POSTGRES_USER:sosyal}
+    password: ${POSTGRES_PASSWORD:}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
+
+logging:
+  level:
+    com.proje.sosyal: DEBUG

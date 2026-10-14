@@ -1,0 +1,8 @@
+# Bu dosyayı "local.properties" olarak kopyalayın (Git'e eklenmez).
+# Android Studio sdk.dir satırını otomatik ekler; Windows örneği:
+# sdk.dir=C\:\\Users\\KULLANICI\\AppData\\Local\\Android\\Sdk
+
+# Emülatör için varsayılan zaten http://10.0.2.2:8080/ dir.
+# Gerçek cihazda bilgisayarınızın yerel IP'sini kullanın (debug cleartext izni
+# yalnızca 10.0.2.2 ve localhost içindir; başka IP için network_security_config'i güncelleyin):
+# sosyal.apiBaseUrl=http://10.0.2.2:8080/

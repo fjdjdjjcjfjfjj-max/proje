@@ -1,0 +1,32 @@
+# Gizli değerler
+.env
+*.env
+!.env.example
+local.properties
+*.jks
+*.keystore
+google-services.json
+
+# Gradle / derleme çıktıları
+.gradle/
+build/
+**/build/
+.kotlin/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Android
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# Loglar
+*.log

@@ -1,0 +1,28 @@
+# Yerel geliştirme servisleri. Üretimde KULLANMAYIN.
+# Kullanım (proje kökünden):  docker compose -f infra/docker-compose.yml --env-file infra/.env up -d
+name: sosyal-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sosyal-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sosyal}
+      POSTGRES_USER: ${POSTGRES_USER:-sosyal}
+      # Parola zorunludur; infra/.env dosyasında tanımlayın (Git'e eklenmez).
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?infra/.env icinde POSTGRES_PASSWORD tanimlayin}
+      TZ: UTC
+    ports:
+      # Yalnızca yerel makineden erişilebilir
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - sosyal-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  sosyal-pgdata:

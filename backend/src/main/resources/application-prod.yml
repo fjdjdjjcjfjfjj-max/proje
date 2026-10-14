@@ -1,0 +1,21 @@
+# Üretim profili. Tüm bağlantı bilgileri ortam değişkenleriyle verilmelidir:
+#   DB_URL, DB_USERNAME, DB_PASSWORD, CORS_ALLOWED_ORIGINS
+# Eksik değer varsa uygulama başlamaz (fail-fast).
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+server:
+  # Uygulama yalnızca güvenilir bir ters vekil (reverse proxy / load balancer)
+  # arkasında çalıştırılmalıdır; X-Forwarded-* başlıkları ona göre işlenir.
+  forward-headers-strategy: native
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+logging:
+  level:
+    com.proje.sosyal: INFO
