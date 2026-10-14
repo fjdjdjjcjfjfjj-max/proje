@@ -23,6 +23,8 @@ Anahtarı sunucuda Docker ile üretebilirsiniz (bilgisayarınızda JDK gerekmez)
 ```bash
 mkdir -p ~/imza && cd ~/imza
 read -rsp "Anahtar parolası (en az 12 karakter): " KS_PASS; echo
+export KS_PASS          # docker run -e KS_PASS yalnızca dışa aktarılmış değişkeni görür
+echo ${#KS_PASS}        # parola uzunluğu; 0 ise tekrar girin
 docker run --rm -e KS_PASS -v "$PWD":/out eclipse-temurin:21-jdk \
   sh -c 'keytool -genkeypair -keystore /out/sosyal-release.jks -storetype PKCS12 \
          -alias sosyal -keyalg RSA -keysize 4096 -validity 10000 \
