@@ -7,14 +7,17 @@ on:
       - ".github/workflows/android-apk.yml"
   workflow_dispatch:
 
+# Sürüm yayınlamak (GitHub Release) için yazma izni gerekir.
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
-  # İndirilen APK'nın bağlanacağı API adresi, depo ayarlarındaki değişkenden okunur
-  # (Settings -> Secrets and variables -> Actions -> Variables -> SOSYAL_API_BASE_URL).
-  # Depo herkese açık olduğu için sunucu adresi koda yazılmaz. Tanımlı değilse APK
-  # emülatör adresini (10.0.2.2) kullanır.
+  # API adresi depo değişkeninden okunur (Settings -> Secrets and variables -> Actions -> Variables).
+  # Depo herkese açık olduğu için sunucu adresi koda yazılmaz.
   SOSYAL_API_BASE_URL: ${{ vars.SOSYAL_API_BASE_URL }}
 
 jobs:
@@ -34,18 +37,79 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Debug APK derle
-        run: ./gradlew assembleDebug -Psosyal.apiBaseUrl="$SOSYAL_API_BASE_URL" --stacktrace
+      # Her çalıştırmada artan sürüm numarası (önceki elle dağıtılan APK'lar 1 kullanıyordu).
+      - name: Sürüm numarası
+        run: |
+          echo "VERSION_CODE=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+          echo "VERSION_NAME=0.1.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
 
       - name: Birim testleri
         run: ./gradlew testDebugUnitTest
 
+      - name: İmza anahtarını hazırla
+        id: signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning::ANDROID_KEYSTORE_BASE64 tanımlı değil; yalnızca debug APK derlenecek ve sürüm yayınlanmayacak (docs/android-release.md)."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Release APK derle (imzalı)
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          SOSYAL_KEYSTORE_FILE: ${{ runner.temp }}/release.jks
+          SOSYAL_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: >
+          ./gradlew assembleRelease --stacktrace
+          -Psosyal.releaseApiBaseUrl="$SOSYAL_API_BASE_URL"
+          -Psosyal.versionCode="$VERSION_CODE"
+          -Psosyal.versionName="$VERSION_NAME"
+          -Psosyal.updateManifestUrl="https://github.com/${{ github.repository }}/releases/latest/download/version.json"
+
+      - name: Debug APK derle (imza anahtarı yoksa)
+        if: steps.signing.outputs.enabled != 'true'
+        run: ./gradlew assembleDebug -Psosyal.apiBaseUrl="$SOSYAL_API_BASE_URL" --stacktrace
+
+      - name: Sürüm dosyalarını hazırla
+        id: dist
+        run: |
+          mkdir -p dist
+          if [ "${{ steps.signing.outputs.enabled }}" = "true" ]; then
+            cp app/build/outputs/apk/release/app-release.apk dist/sosyal.apk
+          else
+            cp app/build/outputs/apk/debug/app-debug.apk dist/sosyal.apk
+          fi
+          SHA=$(sha256sum dist/sosyal.apk | cut -d' ' -f1)
+          TAG="android-v${VERSION_CODE}"
+          cat > dist/version.json <<JSON
+          {"versionCode": ${VERSION_CODE}, "versionName": "${VERSION_NAME}", "apkUrl": "https://github.com/${{ github.repository }}/releases/download/${TAG}/sosyal.apk", "sha256": "${SHA}"}
+          JSON
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          cat dist/version.json
+
       - uses: actions/upload-artifact@v4
         with:
-          name: sosyal-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          name: sosyal-apk
+          path: android/dist/
           retention-days: 14
+
+      # Yalnızca imzalı derlemeler yayınlanır: uygulama içi güncelleme aynı imzayı gerektirir.
+      - name: GitHub Release olarak yayınla
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.dist.outputs.tag }}" dist/sosyal.apk dist/version.json \
+            --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" \
+            --title "Android ${VERSION_NAME}" \
+            --notes "Otomatik derleme: ${{ github.sha }}" \
+            --latest
 
       - uses: actions/upload-artifact@v4
         if: failure()

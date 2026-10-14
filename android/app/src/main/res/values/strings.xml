@@ -107,4 +107,17 @@ Verileriniz satılmaz, reklam amacıyla profillenmez. Hesabınızı silme ve ver
     <string name="action_save">Kaydet</string>
     <string name="profile_account_email">Hesap e-postası</string>
     <string name="profile_account_section">Hesap</string>
+
+    <!-- Uygulama içi güncelleme -->
+    <string name="update_title">Yeni sürüm hazır</string>
+    <string name="update_message">Sürüm %1$s indirilmeye hazır. Şimdi güncellemek ister misin?</string>
+    <string name="update_action">Güncelle</string>
+    <string name="update_later">Sonra</string>
+    <string name="update_downloading">Güncelleme indiriliyor…</string>
+    <string name="update_failed">Güncelleme indirilemedi. Bağlantını kontrol edip tekrar dene.</string>
+    <string name="update_ready_title">Güncelleme indirildi</string>
+    <string name="update_ready_message">Kurulumu başlatmak için devam et.</string>
+    <string name="update_permission_message">Güncellemeyi kurabilmek için bir kereliğine "Bu kaynaktan izin ver" seçeneğini açman gerekiyor. Ayarlardan döndükten sonra tekrar "Kur"a dokun.</string>
+    <string name="update_install">Kur</string>
+    <string name="update_open_settings">Ayarları aç</string>
 </resources>

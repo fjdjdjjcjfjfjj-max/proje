@@ -122,4 +122,5 @@ Gizli değerler yalnızca ortam değişkenleriyle verilir. Depoda parola, anahta
 - [Windows kurulumu](docs/windows-setup.md)
 - [Sunucu hazırlığı (Ubuntu)](docs/server-setup.md)
 - [Sunucuya kurulum ve yedekleme](docs/deploy.md)
+- [Android sürüm dağıtımı ve uygulama içi güncelleme](docs/android-release.md)
 - [Yol haritası ve eksik özellikler](docs/roadmap.md)

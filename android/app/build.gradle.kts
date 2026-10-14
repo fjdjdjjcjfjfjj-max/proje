@@ -24,6 +24,18 @@ fun configValue(key: String): String? =
 val debugApiBaseUrl = configValue("sosyal.apiBaseUrl") ?: "http://10.0.2.2:8080/"
 val releaseApiBaseUrl = configValue("sosyal.releaseApiBaseUrl") ?: "https://api.example.invalid/"
 
+// Uygulama içi güncelleme: en son sürüm bilgisinin (version.json) adresi. Boşsa güncelleme kontrolü kapalıdır.
+val updateManifestUrl = configValue("sosyal.updateManifestUrl").orEmpty()
+
+// CI her derlemede artan bir sürüm numarası verir; yerel derlemeler 1 kullanır.
+val appVersionCode = configValue("sosyal.versionCode")?.toInt() ?: 1
+val appVersionName = configValue("sosyal.versionName") ?: "0.1.0-yerel"
+
+// Yayın imzası yalnızca ortam değişkenlerinden okunur (CI'da GitHub Secrets). Anahtar depoya girmez.
+// Aynı anahtarla imzalanan sürümler birbirinin üzerine kurulabilir; anahtar kaybolursa kullanıcılar
+// uygulamayı silip yeniden kurmak zorunda kalır.
+val releaseKeystoreFile: String? = System.getenv("SOSYAL_KEYSTORE_FILE")?.takeIf { it.isNotBlank() }
+
 android {
     namespace = "com.proje.sosyal.android"
     compileSdk = 36
@@ -32,9 +44,21 @@ android {
         applicationId = "com.proje.sosyal.android"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "UPDATE_MANIFEST_URL", "\"$updateManifestUrl\"")
+    }
+
+    signingConfigs {
+        if (releaseKeystoreFile != null) {
+            create("release") {
+                storeFile = file(releaseKeystoreFile)
+                storePassword = System.getenv("SOSYAL_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("SOSYAL_KEY_ALIAS") ?: "sosyal"
+                keyPassword = System.getenv("SOSYAL_KEY_PASSWORD") ?: System.getenv("SOSYAL_KEYSTORE_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -42,10 +66,13 @@ android {
             buildConfigField("String", "API_BASE_URL", "\"$debugApiBaseUrl\"")
         }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // Küçültme (R8) şimdilik kapalı: kural seti gerçek cihazda test edildikten sonra açılacak.
+            // Release derlemesi debug değildir (debuggable=false), log basmaz ve yalnızca HTTPS kullanır.
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("String", "API_BASE_URL", "\"$releaseApiBaseUrl\"")
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 

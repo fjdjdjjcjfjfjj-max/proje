@@ -15,6 +15,7 @@ import com.proje.sosyal.android.core.session.SessionState
 import com.proje.sosyal.android.core.ui.components.LoadingView
 import com.proje.sosyal.android.presentation.auth.LoginRoute
 import com.proje.sosyal.android.presentation.auth.RegisterRoute
+import com.proje.sosyal.android.presentation.update.UpdatePrompt
 import kotlinx.serialization.Serializable
 
 @Serializable data object LoginDestination
@@ -32,6 +33,7 @@ fun SosyalRoot(viewModel: SessionViewModel = hiltViewModel()) {
         SessionState.LoggedOut -> AuthNavHost()
         SessionState.LoggedIn -> SosyalAppShell()
     }
+    UpdatePrompt()
 }
 
 @Composable
