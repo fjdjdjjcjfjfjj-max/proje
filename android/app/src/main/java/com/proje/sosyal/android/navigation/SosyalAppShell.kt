@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.proje.sosyal.android.R
 import com.proje.sosyal.android.presentation.home.HomeRouteScreen
 import com.proje.sosyal.android.presentation.placeholder.NotImplementedScreen
+import com.proje.sosyal.android.presentation.profile.ProfileRouteScreen
 
 /**
  * Uygulama iskeleti. NavigationSuiteScaffold telefonlarda alt navigasyon çubuğu,
@@ -56,7 +57,7 @@ fun SosyalAppShell(navController: NavHostController = rememberNavController()) {
                 composable<ExploreRoute> { NotImplementedScreen(stringResource(R.string.nav_explore)) }
                 composable<CreatePostRoute> { NotImplementedScreen(stringResource(R.string.nav_create)) }
                 composable<NotificationsRoute> { NotImplementedScreen(stringResource(R.string.nav_notifications)) }
-                composable<ProfileRoute> { NotImplementedScreen(stringResource(R.string.nav_profile)) }
+                composable<ProfileRoute> { ProfileRouteScreen() }
             }
         }
     }

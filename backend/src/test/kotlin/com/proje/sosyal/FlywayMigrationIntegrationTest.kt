@@ -23,14 +23,14 @@ class FlywayMigrationIntegrationTest @Autowired constructor(
     fun cleanDatabase() {
         // moderation_actions yalnızca ekleme yapılabilir; test temizliği için tetikleyici geçici olarak devre dışı.
         jdbc.execute("ALTER TABLE moderation_actions DISABLE TRIGGER trg_moderation_actions_append_only")
-        jdbc.execute("TRUNCATE moderation_actions, reports, user_blocks, post_likes, comments, posts, users CASCADE")
+        jdbc.execute("TRUNCATE moderation_actions, reports, user_blocks, post_likes, comments, posts, refresh_tokens, users CASCADE")
         jdbc.execute("ALTER TABLE moderation_actions ENABLE TRIGGER trg_moderation_actions_append_only")
     }
 
     @Test
-    fun `V1 migrasyonu basariyla uygulanir`() {
+    fun `migrasyonlar basariyla uygulanir`() {
         val success = jdbc.queryForObject(
-            "SELECT success FROM flyway_schema_history WHERE version = '1'",
+            "SELECT bool_and(success) FROM flyway_schema_history WHERE version IN ('1', '2')",
             Boolean::class.java,
         )
         assertThat(success).isTrue()
@@ -41,6 +41,7 @@ class FlywayMigrationIntegrationTest @Autowired constructor(
         )
         assertThat(tables).contains(
             "users", "posts", "comments", "post_likes", "user_blocks", "reports", "moderation_actions",
+            "refresh_tokens",
         )
     }
 

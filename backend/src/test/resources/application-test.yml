@@ -3,5 +3,9 @@ springdoc:
     enabled: true
 
 app:
+  auth:
+    allow-ephemeral-secret: true
+    # Testler aynı IP'den çok sayıda istek atar; IP sınırı ayrıca birim testinde doğrulanır.
+    ip-limit: 10000
   cors:
     allowed-origins: http://localhost:3000

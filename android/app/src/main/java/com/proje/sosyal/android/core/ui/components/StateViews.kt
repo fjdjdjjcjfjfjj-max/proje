@@ -52,7 +52,7 @@ fun ErrorView(error: AppError, onRetry: () -> Unit, modifier: Modifier = Modifie
     val (titleRes, messageRes) = when (error) {
         AppError.NETWORK -> R.string.error_network_title to R.string.error_network_message
         AppError.SERVER -> R.string.error_server_title to R.string.error_server_message
-        AppError.UNAUTHORIZED, AppError.UNKNOWN -> R.string.error_unknown_title to R.string.error_unknown_message
+        else -> R.string.error_unknown_title to error.messageRes()
     }
     CenteredColumn(modifier) {
         Text(stringResource(titleRes), style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)

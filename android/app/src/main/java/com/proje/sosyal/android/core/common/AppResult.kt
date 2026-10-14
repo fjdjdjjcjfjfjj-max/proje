@@ -5,10 +5,22 @@ enum class AppError {
     NETWORK,
     SERVER,
     UNAUTHORIZED,
+    VALIDATION,
+    INVALID_CREDENTIALS,
+    ACCOUNT_SUSPENDED,
+    USERNAME_TAKEN,
+    EMAIL_TAKEN,
+    AGE_NOT_ELIGIBLE,
+    TOO_MANY_REQUESTS,
     UNKNOWN,
 }
 
 sealed interface AppResult<out T> {
     data class Success<T>(val data: T) : AppResult<T>
-    data class Failure(val error: AppError) : AppResult<Nothing>
+
+    /**
+     * [message]: backend'in kullanıcıya gösterilebilir Türkçe mesajı (varsa). Kişisel veri içermez;
+     * yoksa arayüz [error] için yerel metni gösterir.
+     */
+    data class Failure(val error: AppError, val message: String? = null) : AppResult<Nothing>
 }

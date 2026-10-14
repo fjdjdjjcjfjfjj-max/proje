@@ -3,6 +3,7 @@ package com.proje.sosyal.common.error
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
@@ -31,8 +32,15 @@ class GlobalExceptionHandler(private val errors: ApiErrorFactory) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(ApiException::class)
-    fun handleApi(ex: ApiException, request: HttpServletRequest) =
-        respond(ex.errorCode, request, ex.message)
+    fun handleApi(ex: ApiException, request: HttpServletRequest): ResponseEntity<ApiError> {
+        val response = respond(ex.errorCode, request, ex.message)
+        if (ex is RateLimitExceededException) {
+            return ResponseEntity.status(response.statusCode)
+                .header(HttpHeaders.RETRY_AFTER, ex.retryAfterSeconds.toString())
+                .body(response.body)
+        }
+        return response
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(ex: MethodArgumentNotValidException, request: HttpServletRequest): ResponseEntity<ApiError> {

@@ -10,6 +10,13 @@ cd "$REPO_DIR"
 grep -qE '^API_DOMAIN=.+' infra/prod/.env || { echo "infra/prod/.env içinde API_DOMAIN boş" >&2; exit 1; }
 grep -qE '^POSTGRES_PASSWORD=.+' infra/prod/.env || { echo "infra/prod/.env içinde POSTGRES_PASSWORD boş" >&2; exit 1; }
 
+# JWT anahtarı yoksa bir kez üretilir (eski .env dosyaları için de geçerli).
+if ! grep -qE '^JWT_SECRET=.+' infra/prod/.env; then
+    sed -i '/^JWT_SECRET=/d' infra/prod/.env
+    echo "JWT_SECRET=$(openssl rand -base64 48 | tr -d '\n')" >> infra/prod/.env
+    echo "JWT_SECRET üretildi ve infra/prod/.env dosyasına eklendi."
+fi
+
 git pull --ff-only
 docker compose -f infra/prod/docker-compose.yml --env-file infra/prod/.env up -d --build --remove-orphans
 docker image prune -f > /dev/null

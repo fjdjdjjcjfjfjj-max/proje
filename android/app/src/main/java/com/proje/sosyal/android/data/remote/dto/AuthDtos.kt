@@ -1,0 +1,43 @@
+package com.proje.sosyal.android.data.remote.dto
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class RegisterRequestDto(
+    val username: String,
+    val displayName: String,
+    val email: String,
+    val password: String,
+    /** ISO-8601 (yyyy-MM-dd). Backend yalnızca yaş grubunu hesaplar, tarihi saklamaz. */
+    val birthDate: String,
+    val privacyNoticeAccepted: Boolean,
+)
+
+@Serializable
+data class LoginRequestDto(val identifier: String, val password: String)
+
+@Serializable
+data class RefreshRequestDto(val refreshToken: String)
+
+@Serializable
+data class AuthResponseDto(
+    val accessToken: String,
+    val refreshToken: String,
+    val expiresIn: Long,
+    val refreshExpiresIn: Long,
+    val user: MeDto,
+)
+
+@Serializable
+data class MeDto(
+    val id: String,
+    val username: String,
+    val displayName: String,
+    val email: String,
+    val bio: String? = null,
+    val role: String,
+    val ageGroup: String,
+    val ageVerificationStatus: String,
+    val profileVisibility: String,
+    val createdAt: String,
+)

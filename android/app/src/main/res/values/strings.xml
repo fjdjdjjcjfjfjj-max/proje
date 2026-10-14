@@ -27,4 +27,65 @@
     <!-- Henüz geliştirilmemiş bölümler -->
     <string name="coming_soon_title">%1$s henüz hazır değil</string>
     <string name="coming_soon_message">Bu bölüm sonraki geliştirme aşamalarında eklenecek.</string>
+    <!-- Hata mesajları (sunucu mesajı yoksa) -->
+    <string name="error_validation">Lütfen bilgileri kontrol edin.</string>
+    <string name="error_invalid_credentials">Kullanıcı adı/e-posta veya parola hatalı.</string>
+    <string name="error_account_suspended">Hesabınız askıya alınmış.</string>
+    <string name="error_username_taken">Bu kullanıcı adı kullanılıyor.</string>
+    <string name="error_email_taken">Bu e-posta adresiyle kayıtlı bir hesap var.</string>
+    <string name="error_age_not_eligible">Kayıt olmak için en az 13 yaşında olmalısınız.</string>
+    <string name="error_too_many_requests">Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin.</string>
+    <string name="error_session_expired">Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.</string>
+
+    <!-- Giriş -->
+    <string name="login_title">Giriş yap</string>
+    <string name="login_subtitle">Hesabınıza kullanıcı adınız veya e-postanızla girin.</string>
+    <string name="field_identifier">Kullanıcı adı veya e-posta</string>
+    <string name="field_password">Parola</string>
+    <string name="action_login">Giriş yap</string>
+    <string name="action_go_register">Hesabın yok mu? Kayıt ol</string>
+    <string name="action_show_password">Göster</string>
+    <string name="action_hide_password">Gizle</string>
+
+    <!-- Kayıt -->
+    <string name="register_title">Hesap oluştur</string>
+    <string name="field_username">Kullanıcı adı</string>
+    <string name="field_username_hint">3-30 karakter: harf, rakam, _ ve .</string>
+    <string name="field_display_name">Görünen ad</string>
+    <string name="field_email">E-posta</string>
+    <string name="field_password_hint">En az 10 karakter</string>
+    <string name="field_birth_date">Doğum tarihi</string>
+    <string name="field_birth_date_hint">Yalnızca yaş grubunuzu belirlemek için kullanılır, saklanmaz.</string>
+    <string name="action_select">Seç</string>
+    <string name="action_ok">Tamam</string>
+    <string name="action_cancel">Vazgeç</string>
+    <string name="privacy_consent">Aydınlatma metnini okudum.</string>
+    <string name="action_read_privacy">Aydınlatma metnini oku</string>
+    <string name="action_register">Kayıt ol</string>
+    <string name="action_go_login">Zaten hesabın var mı? Giriş yap</string>
+
+    <string name="validation_username">Kullanıcı adı 3-30 karakter olmalı; yalnızca harf, rakam, _ ve . içerebilir.</string>
+    <string name="validation_display_name">Görünen ad 1-50 karakter olmalı.</string>
+    <string name="validation_email">Geçerli bir e-posta adresi girin.</string>
+    <string name="validation_password">Parola 10-64 karakter olmalı.</string>
+    <string name="validation_birth_date">Doğum tarihinizi seçin.</string>
+    <string name="validation_privacy">Devam etmek için aydınlatma metnini onaylayın.</string>
+    <string name="validation_required">Bu alan zorunludur.</string>
+
+    <string name="privacy_title">Aydınlatma Metni (taslak)</string>
+    <string name="privacy_body">Bu metin taslaktır ve hukuki inceleme sonrasında güncellenecektir.
+
+Hesabınızı oluşturmak ve hizmeti sunmak için şu verileri işliyoruz: kullanıcı adı, görünen ad, e-posta adresi, parolanızın geri döndürülemez özeti ve yaş grubunuz.
+
+Doğum tarihiniz yalnızca 18 yaşından küçük olup olmadığınızı belirlemek için kullanılır; tam tarih saklanmaz. 18 yaşından küçük kullanıcıların profili varsayılan olarak gizlidir.
+
+Verileriniz satılmaz, reklam amacıyla profillenmez. Hesabınızı silme ve verilerinize erişme haklarınızı uygulama içinden kullanabileceksiniz.</string>
+
+    <!-- Profil -->
+    <string name="profile_private">Gizli profil</string>
+    <string name="profile_public">Herkese açık profil</string>
+    <string name="profile_minor_notice">18 yaşından küçük hesaplar için ek gizlilik korumaları uygulanır.</string>
+    <string name="profile_age_unverified">Yaş doğrulanmadı (beyan)</string>
+    <string name="profile_age_verified">Yaş doğrulandı</string>
+    <string name="action_logout">Çıkış yap</string>
 </resources>

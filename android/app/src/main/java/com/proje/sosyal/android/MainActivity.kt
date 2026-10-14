@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.proje.sosyal.android.core.ui.theme.SosyalTheme
-import com.proje.sosyal.android.navigation.SosyalAppShell
+import com.proje.sosyal.android.navigation.SosyalRoot
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SosyalTheme {
-                SosyalAppShell()
+                SosyalRoot()
             }
         }
     }

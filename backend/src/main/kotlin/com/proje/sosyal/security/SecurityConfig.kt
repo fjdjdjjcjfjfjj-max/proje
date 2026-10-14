@@ -3,12 +3,14 @@ package com.proje.sosyal.security
 import com.proje.sosyal.config.CorsProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.convert.converter.Converter
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter
 import org.springframework.web.cors.CorsConfiguration
@@ -19,8 +21,8 @@ import java.time.Duration
 /**
  * Varsayılan politika: açıkça izin verilmeyen her uç nokta kimlik doğrulaması ister.
  *
- * - Durumsuz (stateless) API: oturum çerezi yok, kimlik doğrulama Aşama 2'de
- *   Bearer erişim belirteci (JWT) ile eklenecek.
+ * - Durumsuz (stateless) API: oturum çerezi yok; kimlik doğrulama Authorization başlığındaki
+ *   Bearer erişim belirteciyle (HS256 JWT) yapılır. Bkz. [JwtConfig].
  * - CSRF koruması kapalıdır çünkü kimlik bilgisi çerezle değil Authorization
  *   başlığıyla taşınır; çerez tabanlı oturuma geçilirse yeniden açılmalıdır.
  * - Yönetici/moderatör uç noktaları ayrıca rol kontrolüne tabidir (EnableMethodSecurity).
@@ -35,6 +37,7 @@ class SecurityConfig {
         http: HttpSecurity,
         authenticationEntryPoint: JsonAuthenticationEntryPoint,
         accessDeniedHandler: JsonAccessDeniedHandler,
+        jwtAuthenticationConverter: Converter<Jwt, UserAuthentication>,
     ): SecurityFilterChain {
         http {
             csrf { disable() }
@@ -52,8 +55,17 @@ class SecurityConfig {
                 this.authenticationEntryPoint = authenticationEntryPoint
                 this.accessDeniedHandler = accessDeniedHandler
             }
+            oauth2ResourceServer {
+                jwt { this.jwtAuthenticationConverter = jwtAuthenticationConverter }
+                this.authenticationEntryPoint = authenticationEntryPoint
+                this.accessDeniedHandler = accessDeniedHandler
+            }
             authorizeHttpRequests {
                 authorize(HttpMethod.OPTIONS, "/**", permitAll)
+                authorize(HttpMethod.POST, "/api/v1/auth/register", permitAll)
+                authorize(HttpMethod.POST, "/api/v1/auth/login", permitAll)
+                authorize(HttpMethod.POST, "/api/v1/auth/refresh", permitAll)
+                authorize(HttpMethod.POST, "/api/v1/auth/logout", permitAll)
                 authorize(HttpMethod.GET, "/api/v1/system/status", permitAll)
                 authorize(HttpMethod.GET, "/actuator/health", permitAll)
                 authorize(HttpMethod.GET, "/actuator/health/**", permitAll)
