@@ -71,3 +71,8 @@ tasks.withType<Test> {
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
     systemProperty("spring.profiles.active", System.getenv("SPRING_PROFILES_ACTIVE") ?: "dev")
 }
+
+// Yalnızca çalıştırılabilir (fat) jar üretilir; Docker imajı tek bir jar kopyalar.
+tasks.named<Jar>("jar") {
+    enabled = false
+}

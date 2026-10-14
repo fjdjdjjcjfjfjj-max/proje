@@ -120,4 +120,6 @@ Gizli değerler yalnızca ortam değişkenleriyle verilir. Depoda parola, anahta
 - [Yaşa uygun güvenlik tasarımı](docs/age-safety.md)
 - [KVKK ve mevzuat uyum gereksinimleri](docs/compliance-kvkk.md)
 - [Windows kurulumu](docs/windows-setup.md)
+- [Sunucu hazırlığı (Ubuntu)](docs/server-setup.md)
+- [Sunucuya kurulum ve yedekleme](docs/deploy.md)
 - [Yol haritası ve eksik özellikler](docs/roadmap.md)

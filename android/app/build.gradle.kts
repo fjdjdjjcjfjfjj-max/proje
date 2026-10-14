@@ -19,7 +19,7 @@ val localProperties = Properties().apply {
     if (file.exists()) file.inputStream().use { load(it) }
 }
 fun configValue(key: String): String? =
-    (project.findProperty(key) as String?) ?: localProperties.getProperty(key)
+    ((project.findProperty(key) as String?) ?: localProperties.getProperty(key))?.takeIf { it.isNotBlank() }
 
 val debugApiBaseUrl = configValue("sosyal.apiBaseUrl") ?: "http://10.0.2.2:8080/"
 val releaseApiBaseUrl = configValue("sosyal.releaseApiBaseUrl") ?: "https://api.example.invalid/"

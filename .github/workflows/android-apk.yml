@@ -10,6 +10,13 @@ on:
 permissions:
   contents: read
 
+env:
+  # İndirilen APK'nın bağlanacağı API adresi, depo ayarlarındaki değişkenden okunur
+  # (Settings -> Secrets and variables -> Actions -> Variables -> SOSYAL_API_BASE_URL).
+  # Depo herkese açık olduğu için sunucu adresi koda yazılmaz. Tanımlı değilse APK
+  # emülatör adresini (10.0.2.2) kullanır.
+  SOSYAL_API_BASE_URL: ${{ vars.SOSYAL_API_BASE_URL }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +35,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Debug APK derle
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug -Psosyal.apiBaseUrl="$SOSYAL_API_BASE_URL" --stacktrace
 
       - name: Birim testleri
         run: ./gradlew testDebugUnitTest

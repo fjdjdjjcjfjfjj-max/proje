@@ -1,0 +1,24 @@
+# Caddy, API_DOMAIN için Let's Encrypt sertifikasını otomatik alır ve yeniler.
+
+{$API_DOMAIN} {
+	encode zstd gzip
+
+	# Yalnızca sağlık kontrolü dışarıya açık; diğer actuator yolları engellenir.
+	@actuator_private {
+		path /actuator/*
+		not path /actuator/health /actuator/health/*
+	}
+	respond @actuator_private 404
+
+	reverse_proxy backend:8080
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}
