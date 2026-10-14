@@ -40,11 +40,28 @@ Durum sütunu Aşama 1 sonundaki gerçek durumu gösterir.
 | **Bağımlılık açıkları** | Sürümler sabit; düzenli güncelleme ve CI'da bağımlılık taraması (ör. OWASP Dependency-Check / GitHub Dependabot). | 5 |
 | **Ters vekil başlıkları** | Prod'da `forward-headers-strategy: native` yalnızca güvenilir proxy arkasında; istek sınırı gerçek istemci IP'sine göre. | Dağıtım |
 
-## İstek sınırlama
+## Kimlik doğrulama (Aşama 2'de uygulandı)
 
-Aşama 1'de **henüz yok**. Aşama 2'de giriş ve kayıt uç noktalarıyla birlikte eklenecek
-(Bucket4j ile bellek içi; çoklu örnekte PostgreSQL veya Redis destekli). Ters vekil seviyesinde
-genel bir sınır da önerilir.
+| Kontrol | Uygulama |
+|---------|----------|
+| Parola hash'i | `DelegatingPasswordEncoder` + BCrypt maliyet 12; 10–64 karakter, en fazla 72 bayt |
+| Erişim belirteci | HS256 JWT, 15 dk, yalnızca kullanıcı UUID'si; anahtar `JWT_SECRET` (≥ 32 bayt) |
+| Yenileme belirteci | 256 bit rastgele, sunucuda yalnızca SHA-256; her kullanımda rotasyon; tekrar kullanımda aile iptali; satır kilidiyle eşzamanlı yenileme engeli |
+| Hesap durumu | Her istekte veritabanından: askıya alınan/silinen hesabın belirteçleri hemen geçersiz; rol belirteçten değil DB'den |
+| Hesap sayımı | Yanlış parola ve olmayan kullanıcı aynı yanıt ve benzer süre (sahte hash karşılaştırması) |
+| Kaba kuvvet | Hesap başına 5 hatalı giriş / 15 dk; IP başına 30 istek / dk (kayıt, giriş, yenileme) |
+| Kitle ataması | `role`, `status`, `ageVerificationStatus` istekten alınmaz |
+| Android | Belirteçler Android Keystore AES-GCM anahtarıyla şifreli; yedeğe girmez; 401'de tekil yenileme |
+
+Bilinen kısıtlar:
+
+- Kayıt, e-postanın kullanımda olduğunu `EMAIL_TAKEN` ile bildirir (hesap varlığı sızar). E-posta
+  doğrulama akışı eklendiğinde "e-postanızı kontrol edin" yanıtına çevrilmelidir. Kayıt IP başına
+  sınırlıdır.
+- Hesap kilidi, saldırganın bir kullanıcıyı 15 dk dışarıda bırakmasına izin verir (bilinçli ödünleşim).
+- Çıkıştan sonra erişim belirteci en fazla 15 dk geçerli kalır.
+- İstek sınırı sayaçları bellektedir; çoklu örnekte paylaşımlı depoya taşınmalı. Ters vekilde
+  genel bir sınır da önerilir.
 
 ## CSRF
 

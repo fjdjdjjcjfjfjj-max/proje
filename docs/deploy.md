@@ -47,6 +47,9 @@ chmod 600 infra/prod/.env
 cat infra/prod/.env          # API_DOMAIN doğru mu kontrol edin
 ```
 
+`JWT_SECRET` boş bırakılırsa `deploy.sh` ilk çalıştırmada rastgele üretir. Değiştirilirse
+tüm kullanıcıların oturumu kapanır.
+
 Parolayı bir yere not etmeniz gerekmez; yedekten geri dönüşte de bu dosya kullanılır.
 **Bu dosyayı kaybederseniz** veritabanı volume'ü hâlâ eski parolayı bekler; dosyayı yedekleyin.
 

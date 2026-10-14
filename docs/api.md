@@ -60,17 +60,107 @@ Tüm hatalar (filtre zinciri dahil) aynı gövdeyi döner:
 `fieldErrors` öğeleri `{ "field": "username", "message": "..." }` biçimindedir. Reddedilen değer
 bilinçli olarak geri gönderilmez.
 
+## Kimlik doğrulama (Aşama 2)
+
+Kimlik doğrulaması gerektiren isteklerde başlık: `Authorization: Bearer <accessToken>`.
+
+| Belirteç | Ömür | Biçim | Saklama |
+|----------|------|-------|---------|
+| Erişim (`accessToken`) | 15 dakika | HS256 JWT; yalnızca kullanıcı UUID'si (`sub`) içerir | İstemcide |
+| Yenileme (`refreshToken`) | 30 gün | Opak, 256 bit rastgele | Sunucuda yalnızca SHA-256 özeti |
+
+Yenileme belirteci her kullanımda değişir (rotasyon). Daha önce kullanılmış bir yenileme belirteci
+tekrar gönderilirse çalınma şüphesiyle o oturuma ait tüm belirteçler iptal edilir. İstemciler
+yenilemeyi aynı anda tek istekle yapmalıdır.
+
+### `POST /api/v1/auth/register` → `201`
+
+```bash
+curl -s -X POST https://API_ADRESI/api/v1/auth/register -H 'Content-Type: application/json' -d '{
+  "username": "ayse.yilmaz",
+  "displayName": "Ayşe Yılmaz",
+  "email": "ayse@example.com",
+  "password": "GucluParola123",
+  "birthDate": "2000-05-20",
+  "privacyNoticeAccepted": true
+}'
+```
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+  "tokenType": "Bearer",
+  "expiresIn": 900,
+  "refreshToken": "Qm9...",
+  "refreshExpiresIn": 2592000,
+  "user": {
+    "id": "6f1c...", "username": "ayse.yilmaz", "displayName": "Ayşe Yılmaz",
+    "email": "ayse@example.com", "bio": null, "role": "USER",
+    "ageGroup": "ADULT", "ageVerificationStatus": "UNVERIFIED",
+    "profileVisibility": "PUBLIC", "createdAt": "2026-10-14T18:00:00Z"
+  }
+}
+```
+
+Kurallar:
+
+- `username`: 3–30 karakter, harf/rakam/`_`/`.`; küçük harfe çevrilerek saklanır, büyük/küçük harf duyarsız benzersiz.
+- `password`: 10–64 karakter (en fazla 72 bayt; BCrypt sınırı).
+- `birthDate`: yalnızca yaş grubunu hesaplamak için kullanılır, **saklanmaz**. 13 yaş altı → `400 AGE_NOT_ELIGIBLE`.
+  18 yaş altı → `ageGroup: MINOR`, `profileVisibility: PRIVATE`.
+- `privacyNoticeAccepted` `true` olmalı.
+- Hatalar: `400 VALIDATION_FAILED`, `409 USERNAME_TAKEN`, `409 EMAIL_TAKEN`, `429 TOO_MANY_REQUESTS`.
+
+### `POST /api/v1/auth/login` → `200`
+
+```json
+{ "identifier": "ayse.yilmaz", "password": "GucluParola123" }
+```
+
+`identifier` kullanıcı adı veya e-posta olabilir. Yanıt `register` ile aynıdır.
+
+- Yanlış parola ve olmayan kullanıcı **aynı** yanıtı alır: `401 INVALID_CREDENTIALS`.
+- Aynı hesap için 15 dakikada 5 hatalı denemeden sonra `429 TOO_MANY_REQUESTS` (+ `Retry-After` başlığı).
+- Askıya alınmış hesap (yalnızca parola doğruysa): `403 ACCOUNT_SUSPENDED`.
+
+### `POST /api/v1/auth/refresh` → `200`
+
+```json
+{ "refreshToken": "Qm9..." }
+```
+
+Yeni belirteç çifti döner; eski yenileme belirteci artık geçersizdir. Geçersiz/süresi dolmuş/iptal
+edilmiş belirteç: `401 INVALID_REFRESH_TOKEN`.
+
+### `POST /api/v1/auth/logout` → `204`
+
+```json
+{ "refreshToken": "Qm9..." }
+```
+
+Oturumu (belirteç ailesini) iptal eder. Bilinmeyen belirteçte de `204` döner. Mevcut erişim
+belirteci süresi dolana kadar (en çok 15 dakika) geçerli kalır.
+
+### `GET /api/v1/users/me` → `200`
+
+Oturum sahibinin bilgileri (`register` yanıtındaki `user` nesnesi). Kimlik yalnızca belirteçten
+alınır. Askıya alınan/silinen hesabın belirteçleri hemen `401` alır.
+
+### İstek sınırları
+
+| Kapsam | Sınır |
+|--------|-------|
+| Kayıt/giriş/yenileme, IP başına | 30 istek / dakika |
+| Hatalı giriş, hesap başına | 5 / 15 dakika |
+
+Sayaçlar bellektedir (tek backend örneği). Birden fazla örneğe geçilirse paylaşımlı depoya taşınmalıdır.
+
 ## Planlanan uç noktalar (henüz YOK)
 
 Aşağıdaki tasarım taslaktır; ilgili aşamada uygulanıp bu belge güncellenecek.
 
 | Yöntem | Yol                                   | Aşama | Not |
 |--------|---------------------------------------|-------|-----|
-| POST   | `/api/v1/auth/register`               | 2     | Kullanıcı adı, görünen ad, e-posta, parola, doğum tarihi (yalnızca yaş grubu hesaplamak için; saklanmaz) |
-| POST   | `/api/v1/auth/login`                  | 2     | İstek sınırlı |
-| POST   | `/api/v1/auth/refresh`                | 2     | Yenileme belirteci rotasyonu |
-| POST   | `/api/v1/auth/logout`                 | 2     | Yenileme belirtecini iptal eder |
-| GET    | `/api/v1/users/me`                    | 3     | |
 | PATCH  | `/api/v1/users/me`                    | 3     | Görünen ad, biyografi, profil görünürlüğü |
 | GET    | `/api/v1/users/{username}`            | 3     | Engelleme ve yaş görünürlük kuralları uygulanır |
 | GET    | `/api/v1/users/{username}/posts`      | 3     | Keyset sayfalama |

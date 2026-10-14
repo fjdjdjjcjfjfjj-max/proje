@@ -19,12 +19,16 @@
 > ağ hata eşleme) ve `SystemRepositoryImplTest` ayrı bir JVM projesinde derlenip çalıştırıldı.
 > İlk Android Studio senkronizasyonunda çıkabilecek sürüm/derleme hataları Aşama 2 başında giderilecek.
 
-## Aşama 2 — Kimlik doğrulama
+## Aşama 2 — Kimlik doğrulama ✔
 
-- Kayıt (yaş grubu hesaplama, 13 yaş altı reddi), giriş, yenileme, çıkış
-- BCrypt, JWT erişim + hash'li yenileme belirteci (rotasyon), `refresh_tokens` migrasyonu
-- Giriş/kayıt istek sınırı
-- Android: giriş/kayıt ekranları, şifreli belirteç depolama, oturum durumu
+- [x] Kayıt (yaş grubu hesaplama, 13 yaş altı reddi), giriş, yenileme, çıkış, `GET /users/me`
+- [x] BCrypt, JWT erişim + hash'li yenileme belirteci (rotasyon, yeniden kullanım tespiti), V2 migrasyonu
+- [x] IP başına istek sınırı, hesap başına hatalı giriş kilidi
+- [x] Android: giriş/kayıt/profil ekranları, Keystore ile şifreli belirteç depolama, otomatik yenileme
+- [x] Testler: backend 47 test (gerçek PostgreSQL), Android birim testleri
+
+Bilinen eksikler: e-posta doğrulaması ve parola sıfırlama yok; süresi dolmuş `refresh_tokens`
+kayıtlarını temizleyen planlı iş yok; istek sınırı sayaçları bellekte (tek örnek).
 
 ## Aşama 3 — Profil ve gönderiler
 
