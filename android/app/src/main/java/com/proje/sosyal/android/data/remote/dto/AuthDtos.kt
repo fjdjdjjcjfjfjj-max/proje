@@ -40,4 +40,16 @@ data class MeDto(
     val ageVerificationStatus: String,
     val profileVisibility: String,
     val createdAt: String,
+    val stats: ProfileStatsDto = ProfileStatsDto(),
+)
+
+@Serializable
+data class ProfileStatsDto(val postCount: Long = 0, val likesReceived: Long = 0)
+
+/** Kısmi güncelleme: null alanlar gönderilmez (explicitNulls = false) ve değişmez. */
+@Serializable
+data class UpdateMeRequestDto(
+    val displayName: String? = null,
+    val bio: String? = null,
+    val profileVisibility: String? = null,
 )

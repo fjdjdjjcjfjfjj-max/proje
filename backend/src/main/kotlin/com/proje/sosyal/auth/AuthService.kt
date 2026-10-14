@@ -11,8 +11,8 @@ import com.proje.sosyal.user.AgeGroup
 import com.proje.sosyal.user.ProfileVisibility
 import com.proje.sosyal.user.User
 import com.proje.sosyal.user.UserRepository
+import com.proje.sosyal.user.UserService
 import com.proje.sosyal.user.UserStatus
-import com.proje.sosyal.user.dto.MeResponse
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -30,6 +30,7 @@ class AuthService(
     private val agePolicy: AgePolicy,
     private val properties: AuthProperties,
     private val clock: Clock,
+    private val userService: UserService,
 ) {
     private val ipLimiter = RateLimiter(properties.ipLimit, properties.ipWindow, clock)
     private val failedLoginLimiter = RateLimiter(properties.maxFailedLogins, properties.failedLoginWindow, clock)
@@ -150,7 +151,7 @@ class AuthService(
         expiresIn = properties.accessTokenTtl.seconds,
         refreshToken = issued.refreshToken,
         refreshExpiresIn = properties.refreshTokenTtl.seconds,
-        user = MeResponse.from(user),
+        user = userService.toMe(user),
     )
 
     companion object {

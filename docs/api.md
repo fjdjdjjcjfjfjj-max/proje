@@ -146,6 +146,21 @@ belirteci süresi dolana kadar (en çok 15 dakika) geçerli kalır.
 Oturum sahibinin bilgileri (`register` yanıtındaki `user` nesnesi). Kimlik yalnızca belirteçten
 alınır. Askıya alınan/silinen hesabın belirteçleri hemen `401` alır.
 
+### `PATCH /api/v1/users/me` → `200`
+
+Kısmi güncelleme; gönderilmeyen alan değişmez. Yanıt `GET /users/me` ile aynıdır.
+
+```json
+{ "displayName": "Ayşe Y.", "bio": "Merhaba!", "profileVisibility": "PRIVATE" }
+```
+
+- `displayName` 1–50, `bio` en fazla 300 karakter (boş metin biyografiyi siler).
+- 18 yaş altı hesap `PUBLIC` yapamaz: `403 PROFILE_VISIBILITY_NOT_ALLOWED`.
+- `role`, `ageGroup`, `ageVerificationStatus` gibi alanlar gönderilse de yok sayılır.
+
+`GET /users/me` yanıtı `stats` nesnesi de içerir: `{"postCount": 3, "likesReceived": 1362}`
+(yalnızca yayındaki gönderiler sayılır).
+
 ### İstek sınırları
 
 | Kapsam | Sınır |
@@ -161,7 +176,6 @@ Aşağıdaki tasarım taslaktır; ilgili aşamada uygulanıp bu belge güncellen
 
 | Yöntem | Yol                                   | Aşama | Not |
 |--------|---------------------------------------|-------|-----|
-| PATCH  | `/api/v1/users/me`                    | 3     | Görünen ad, biyografi, profil görünürlüğü |
 | GET    | `/api/v1/users/{username}`            | 3     | Engelleme ve yaş görünürlük kuralları uygulanır |
 | GET    | `/api/v1/users/{username}/posts`      | 3     | Keyset sayfalama |
 | GET    | `/api/v1/feed?cursor=`                | 3     | Kronolojik; engellenenler hariç |

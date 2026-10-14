@@ -10,4 +10,12 @@ data class UserProfile(
     /** Yaş yalnızca bağımsız doğrulama servisi onayladıysa "doğrulanmış" sayılır. */
     val isAgeVerified: Boolean,
     val isProfilePrivate: Boolean,
+    val postCount: Long = 0,
+    val likesReceived: Long = 0,
+)
+
+data class ProfileUpdate(
+    val displayName: String,
+    val bio: String,
+    val isPrivate: Boolean,
 )

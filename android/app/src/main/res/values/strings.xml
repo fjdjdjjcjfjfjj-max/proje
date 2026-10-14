@@ -88,4 +88,23 @@ Verileriniz satılmaz, reklam amacıyla profillenmez. Hesabınızı silme ve ver
     <string name="profile_age_unverified">Yaş doğrulanmadı (beyan)</string>
     <string name="profile_age_verified">Yaş doğrulandı</string>
     <string name="action_logout">Çıkış yap</string>
+    <string name="profile_stat_posts">Gönderi</string>
+    <string name="profile_stat_likes">Beğeni</string>
+    <string name="profile_add_bio">Biyografi ekle</string>
+    <string name="profile_edit">Profili düzenle</string>
+    <string name="profile_menu">Menü</string>
+    <string name="profile_tab_posts">Gönderiler</string>
+    <string name="profile_tab_liked">Beğenilenler</string>
+    <string name="profile_posts_empty_title">Henüz gönderi yok</string>
+    <string name="profile_posts_empty_message">Paylaştığın gönderiler burada görünecek.</string>
+    <string name="profile_liked_empty_title">Beğendiğin gönderiler</string>
+    <string name="profile_liked_empty_message">Beğendiğin gönderiler burada görünecek. Bu listeyi yalnızca sen görebilirsin.</string>
+    <string name="profile_private_badge">Gizli hesap</string>
+    <string name="field_bio">Biyografi</string>
+    <string name="field_private_profile">Gizli profil</string>
+    <string name="field_private_profile_hint">Gizli profilde gönderilerin yalnızca izin verdiğin kişilere görünür.</string>
+    <string name="field_private_profile_minor">18 yaşından küçük hesapların profili gizli kalır.</string>
+    <string name="action_save">Kaydet</string>
+    <string name="profile_account_email">Hesap e-postası</string>
+    <string name="profile_account_section">Hesap</string>
 </resources>

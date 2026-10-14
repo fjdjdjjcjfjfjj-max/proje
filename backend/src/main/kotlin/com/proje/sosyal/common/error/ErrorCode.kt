@@ -21,6 +21,7 @@ enum class ErrorCode(val status: HttpStatus, val defaultMessage: String) {
     USERNAME_TAKEN(HttpStatus.CONFLICT, "Bu kullanıcı adı kullanılıyor."),
     EMAIL_TAKEN(HttpStatus.CONFLICT, "Bu e-posta adresiyle kayıtlı bir hesap var."),
     AGE_NOT_ELIGIBLE(HttpStatus.BAD_REQUEST, "Kayıt olmak için en az 13 yaşında olmalısınız."),
+    PROFILE_VISIBILITY_NOT_ALLOWED(HttpStatus.FORBIDDEN, "18 yaşından küçük hesapların profili gizli kalmalıdır."),
     TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "Çok fazla istek gönderildi. Lütfen daha sonra tekrar deneyin."),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Beklenmeyen bir hata oluştu."),
 }

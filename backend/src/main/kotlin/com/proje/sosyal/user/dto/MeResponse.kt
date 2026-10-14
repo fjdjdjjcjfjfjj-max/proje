@@ -20,9 +20,10 @@ data class MeResponse(
     val ageVerificationStatus: AgeVerificationStatus,
     val profileVisibility: ProfileVisibility,
     val createdAt: Instant,
+    val stats: ProfileStats,
 ) {
     companion object {
-        fun from(user: User) = MeResponse(
+        fun from(user: User, stats: ProfileStats) = MeResponse(
             id = user.id,
             username = user.username,
             displayName = user.displayName,
@@ -33,6 +34,13 @@ data class MeResponse(
             ageVerificationStatus = user.ageVerificationStatus,
             profileVisibility = user.profileVisibility,
             createdAt = user.createdAt,
+            stats = stats,
         )
     }
 }
+
+/** Profil sayaçları. Yalnızca yayındaki gönderiler sayılır. */
+data class ProfileStats(
+    val postCount: Long,
+    val likesReceived: Long,
+)
